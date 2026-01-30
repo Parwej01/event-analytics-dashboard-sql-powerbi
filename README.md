@@ -18,9 +18,9 @@ It answers key business questions such as:
 This project was built using a **complete data analyst tool stack**:
 
 - **SQL** → Data extraction, cleaning, joins, transformations  
-- **Excel** → Data validation and exploratory analysis  
+- **Excel** → Data validation and exploratory analysis
+- **PowerPoint** → Visual bsckground presentation  
 - **Power BI** → Data modeling, DAX, visualization, dashboarding  
-- **PowerPoint** → Business storytelling & stakeholder presentation  
 
 👉 This reflects a **real-world BI workflow**, not just visualization.
 
@@ -29,48 +29,41 @@ This project was built using a **complete data analyst tool stack**:
 ## 📊 Dashboard Structure
 The report is divided into **3 interactive analysis pages**, each answering a specific business question.
 
+### 📈Performance & Growth KPIs
+- Designed executive KPIs with MoM & YoY analysis for sales, profit, investment, and attendance.
+- Implemented conditional formatting and indicators to highlight performance trends and anomalies.
+- Designed KPIs for organizer performance, comparing events, revenue, profit, and ratings.
+
 ---
 
 ### 🔹 1. Performance Trends
 **Purpose:** Understand event performance and customer experience
 
-**Insights covered:**
 - Registration vs Attendance trends over time
 - Average rating trends by year and event format
 - Top & bottom events by customer rating
 - Month-wise seasonality of event activity
-
-**Business Value:**  
-Helps identify **high-performing events**, customer preferences, and experience gaps.
 
 ---
 
 ### 🔹 2. Activity Trends
 **Purpose:** Analyze sales and profit drivers
 
-**Insights covered:**
 - Sales & profit by event category and topic
 - ROI by category and location
 - City & state-wise event hosting trends
 - Investment vs sales comparison over time
 - Profitability by event format
 
-**Business Value:**  
-Supports **strategic planning, location selection, and budget optimization**.
-
 ---
 
 ### 🔹 3. Event Metrics
 **Purpose:** Detailed performance comparison
 
-**Insights covered:**
 - Event-level performance matrix
 - Organizer performance scorecard
 - Dynamic comparison of attendance, rating, profit, and ticket price
 - Top performer identification
-
-**Business Value:**  
-Enables **drill-down analysis** for operations and partner management.
 
 ---
 
@@ -80,11 +73,9 @@ This project showcases strong hands-on skills in:
 - Star schema data modeling
 - Time intelligence (Previous Year, Previous Month)
 - KPI design for executive dashboards
-- DAX measures & context handling
+- DAX measures & Columns
 - Top N & ranking analysis
 - Conditional formatting & dynamic visuals
-- Professional dashboard UI/UX design
-- Business storytelling with data
 
 ---
 
