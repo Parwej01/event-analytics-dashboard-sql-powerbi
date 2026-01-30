@@ -100,7 +100,7 @@ This dashboard helps stakeholders to:
 ---
 
 ## 🖼️ Dashboard Preview
-Screenshots of the dashboard are included in this repository for quick preview.
+![Performance Trends](event_page01.JPG)
 
 ---
 
