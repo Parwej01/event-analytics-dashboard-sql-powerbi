@@ -1,0 +1,130 @@
+SELECT * FROM events_data_fct limit 10;
+
+SELECT COUNT(*) FROm events_data_fct;
+
+SHOW COLUMNS FROM events_data_fct;
+
+SELECT Event_Name, COUNT(*) Repeat_No
+FROM events_data_fct GROUP BY Event_Name
+HAVING COUNT(*) > 1;
+
+SELECT * FROM (
+SELECT *, 
+	ROW_NUMBER() OVER(partition by Event_ID, Event_Name, City_Key) rnk
+FROM events_data_fct
+) ranking
+WHERE rnk > 1;
+
+SELECT COUNT(*) FROM events_data_fct 
+WHERE City_key IS NULL OR City_key = '';
+
+DELIMITER &&
+CREATE PROCEDURE check_null(IN col_name VARCHAR(50))
+BEGIN
+	IF col_name IS NULL OR col_name = '' THEN
+		SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Not Valid';
+	END IF;
+    
+    SET @sql = CONCAT(
+		'SELECT COUNT(*) AS cnt_null FROM events_data_fct ', 
+		'WHERE ', col_name, ' IS NULL OR ', col_name, ' = '''''
+    );
+     
+    PREPARE stmt FROM @sql;
+    EXECUTE stmt;
+    DEALLOCATE PREPARE stmt;
+END &&
+DELIMITER ;
+
+CALL check_null('Org_Inv_Ticket');
+
+SELECT DISTINCT Seating_Capacity FROM events_data_fct
+ORDER BY Seating_Capacity;
+
+SELECT * FROM events_data_fct 
+WHERE Event_Date IS NULL;
+
+ALTER TABLE events_data_fct
+MODIFY `Event_Date` Date;
+
+UPDATE events_data_fct
+SET Event_Date = STR_TO_DATE(`Event_Date`, '%d-%b-%Y');
+
+SELECT *, DATEDIFF(Event_Date, Prv_Date) AS Date_Gap
+FROM (
+SELECT  Event_date, 
+	lag(Event_Date) OVER(ORDER BY Event_Date) AS Prv_Date
+FROM events_data_fct
+) prev_date
+HAVING Date_Gap > 1
+ORDER BY Date_Gap DESC;
+
+SELECT Event_Date FROM events_data_fct
+WHERE Event_Date IS NULL;
+
+WITH month_sales AS (
+	SELECT YEAR(Event_Date) _year,
+		DATE_FORMAT(Event_Date, '%Y-%m') month_year,
+		SUM(Attended_People * Ticket_Price) AS sales
+	FROM events_data_fct 
+	GROUP BY _year, month_year
+),
+prv_month_sales AS (
+	SELECT _year, month_year, sales,
+		LAG(sales) OVER(ORDER BY month_year) prv_month_sales
+	FROM month_sales
+)
+SELECT month_year,
+	ROUND(((prv_month_sales - sales)/prv_month_sales)*100, 2) MOM_sales 
+FROM prv_month_sales;
+
+SELECT _day, MAX(day_sales) FROM (
+SELECT dayname(Event_Date) AS _day,
+	SUM(Attended_People * Ticket_Price) day_sales
+FROM events_data_fct GROUP BY Event_Date, _day
+) day_sales GROUP BY _day;
+
+
+SELECT Event_Date,
+	SUM(Attended_People * Ticket_Price) total_sales,
+	SUM(SUM(Attended_People * Ticket_Price))
+    OVER(ORDER BY Event_Date) runing_sales
+FROM events_data_fct GROUP BY Event_Date;
+
+SELECT COUNT(*) FROM events_data_fct;
+SELECT COUNT(DISTINCT Event_ID) FROM events_data_fct;
+SELECT COUNT(DISTINCT Category_key) 
+FROM events_data_fct;
+
+SELECT DISTINCT ed.Category_key, 
+	cd.Category 
+FROM events_data_fct ed JOIN
+	category_dim cd ON ed.Category_key = cd.Category_key
+ORDER BY ed.Category_key;
+                   
+SELECT DISTINCT Seating_capacity FROM events_data_fct 
+ORDER BY Seating_Capacity; 
+
+SELECT DISTINCT Food_Provided, COUNT(*) 
+FROM events_data_fct GROUP BY Food_Provided;
+
+SELECT Event_Type, Food_Provided,  
+COUNT(*) Ccount_Event, SUM(Attended_People) ppl_atend 
+FROM events_data_fct GROUP BY Event_Type, Food_Provided;
+
+UPDATE events_data_fct
+SET Sales = COALESCE(Ticket_Price, 0) * COALESCE(No_Registration, 0);
+
+UPDATE events_data_fct
+SET Investment = COALESCE(Org_Inv_Ticket, 0) * COALESCE(Seating_Capacity, 0);
+
+UPDATE events_data_fct
+SET Revenue = Sales - Investment;
+
+SELECT * FROM events_data_fct
+WHERE Revenue < 0;
+
+UPDATE events_data_fct
+SET Revenue = 0 
+WHERE Revenue < 0;
